@@ -11,13 +11,26 @@ module.exports = {
       }
     },
 
-    getUser: async function(){
-
+    getUser: async function(id){
+        try {
+            return await User.findOne({ where : { id:id } })
+        } catch (e) {
+            throw new Error(e)
+        }
     },
 
     findUserByEmail: async function (email) {
         try {
             return await User.findOne({ where : { email:email } })
+
+        } catch (err) {
+            throw new Error(err);
+        }
+    },
+
+    findUserByToken: async function (token) {
+        try {
+            return await User.findOne({ where : { token:token } })
 
         } catch (err) {
             throw new Error(err);

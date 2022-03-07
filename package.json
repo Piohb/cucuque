@@ -1,7 +1,7 @@
 {
   "name": "cucuque",
   "version": "1.0.0",
-  "description": "Le derrière du zizi",
+  "description": "Le derrière du zizique",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/BeatlesBOB/cucuque#readme",
   "dependencies": {
+    "axios": "^0.26.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -28,6 +29,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "sequelize": "^6.16.1",
+    "socket.io": "^4.4.1",
     "sqlite3": "^5.0.2",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",

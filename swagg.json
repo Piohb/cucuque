@@ -1,0 +1,36 @@
+{
+  "swaggerDefinition": {
+    "info": {
+      "title": "cucuque",
+      "description": "Le derrière du zizique",
+      "version": "1.0.0"
+    },
+    "swagger": "2.0",
+    "tags": [{
+      "name": "Authentification",
+      "description": "très important de se protéger"
+      }],
+    "paths": {
+      "/auth/register": {
+        "post": {
+          "description": "Login to the application",
+          "tags": ["Authentification"]
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "description": "Login to the application",
+          "tags": ["Authentification"]
+        }
+      }
+    },
+    "securityDefinitions": {
+      "JwtAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "apis": ["./routes/*.js"]
+}
