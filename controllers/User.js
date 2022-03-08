@@ -60,6 +60,7 @@ module.exports = {
         findOrCreate: async function(id, user){
             if ( !(id in users) ) {
                 users[id] = {
+                    'id': id,
                     'username': user.username,
                     'profile_pic' : user.profile_pic,
                     'score': 0,
