@@ -2,8 +2,8 @@ const express = require('express')
 const router = express.Router()
 const AuthController = require('../controllers/Auth')
 const UserController = require('../controllers/User')
-const { validateRegisterForm, validateLoginForm } = require("../validation/auth");
-const { check, error } = require('../utils.js') ;
+const { validateRegisterForm, validateLoginForm } = require("../validation/auth")
+const { check, error } = require('../utils.js')
 
 //===
 router.post("/register", validateRegisterForm(), async (req, res) => {
