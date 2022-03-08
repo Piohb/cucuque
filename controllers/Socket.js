@@ -5,7 +5,7 @@ global.rooms = []
 
 module.exports = function (socket){
     // on connection
-    socket.on("zizi", () =>{
+    socket.on("zizi", () => {
         console.log('zizi')
     })
 

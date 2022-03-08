@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid')
 const Music = require('../controllers/Music')
+const { random } = require('../utils.js')
 require("dotenv/config")
 
 //=== SOCKET ROOM MODEL
@@ -50,26 +51,44 @@ module.exports = {
     },
 
     startGame: async function (socket, room){
-        console.log('startGame')
         try {
             let playlists = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1", 'GET')
-            let random = Math.floor(Math.random() * playlists.data.playlists.total - 1)
-            let playlist = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1&offset=" + random, 'GET')
-            console.log(playlist.data, 'cucu')
+            let playlist = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1&offset=" + random(0, playlists.data.playlists.total - 1), 'GET')
 
             let tracks = await Music.Request(playlist.data.playlists.href, 'GET')
             tracks = tracks.data.playlists.items[0].tracks
-            console.log(tracks, 'zizi')
 
              Music.Request(tracks.href, 'GET')
                  .then( (res) => {
-                     console.log(res.data)
+                     this.updateGame(socket, room.uid, 1, res.data.items)
                  })
 
         } catch (err){
             throw err
         }
 
+    },
+
+    updateGame: function (socket, uid, index, tracks){
+        if (index < process.env.DEFAULT_TRACKS){
+            socket.to(uid).emit("blindTrack", tracks[random(0, tracks.length - 1)])
+
+            setTimeout( () => {
+                this.updateGame(socket, uid, index++, tracks)
+            }, 1000 * 30 )
+        } else {
+            this.endGame(socket, uid)
+        }
+    },
+
+    endGame: function (socket, uid){
+        let players = [], room = rooms.filter(room => uid)[0]
+        room.users.forEach( (user) => {
+            users[user].answer = false
+            players.push(users[user])
+        })
+
+      socket.to(uid).emit("endGame", players)
     },
 
     IsFull: function(uid) {

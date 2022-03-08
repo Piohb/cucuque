@@ -19,4 +19,17 @@ router.get('/genres', async function(req, res) {
     }
 })
 
+router.get('/genres/:genre/playlists', async function(req, res) {
+    try {
+        let response = await Music.Request("https://api.spotify.com/v1/browse/categories/" + req.params.genre + "/playlists?country=FR", 'GET')
+        return res.status(200).send({
+            statusCode: 200,
+            data: response.data.playlists
+        })
+
+    } catch(err){
+        error(res, err)
+    }
+})
+
 module.exports = router
