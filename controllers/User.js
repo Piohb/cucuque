@@ -11,6 +11,7 @@ module.exports = {
       }
     },
 
+    //=== GET USER BY ID
     getUser: async function(id){
         try {
             return await User.findOne({ where : { id:id } })
@@ -19,6 +20,7 @@ module.exports = {
         }
     },
 
+    //=== GET USER BY EMAIL
     findUserByEmail: async function (email) {
         try {
             return await User.findOne({ where : { email:email } })
@@ -28,6 +30,7 @@ module.exports = {
         }
     },
 
+    //=== GET USER BY TOKEN
     findUserByToken: async function (token) {
         try {
             return await User.findOne({ where : { token:token } })
@@ -37,6 +40,7 @@ module.exports = {
         }
     },
 
+    //=== CREATE USER
     create: async function (data){
         try {
             return await User.create(data)
@@ -44,5 +48,26 @@ module.exports = {
         } catch (err) {
             throw new Error(err)
         }
-    }
+    },
+
+    //=== SOCKET USER MODEL
+    //  id
+    //  username
+    //  profile_pic
+    //  score
+    //  answer
+    socket:{
+        findOrCreate: async function(id, user){
+            if ( !(id in users) ) {
+                users[id] = {
+                    'username': user.username,
+                    'profile_pic' : user.profile_pic,
+                    'score': 0,
+                    'answer': null
+                }
+            }
+
+            return users[id]
+        }
+    },
 }

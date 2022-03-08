@@ -1,5 +1,7 @@
 const User = require('./User')
-const users = {}
+const Room = require('./Room')
+global.users = {}
+global.rooms = []
 
 module.exports = function (socket){
     // on connection
@@ -8,10 +10,17 @@ module.exports = function (socket){
     })
 
     // on room connection
-    socket.on("joinRoom", async ({id, room}) => {
-        const user = await User.getUser(id)
-        socket.emit("someoneJoined", "Le joueur " + user.username + " vient de rentrer dans la room " + room)
-        console.log(user, room)
+    socket.on("joinRoom", async ({genre, user}) => {
+
+        const currentRoom = Room.findOrCreate(genre)
+        const currentUser = await User.socket.findOrCreate(socket.id, user)
+        Room.addToRoom(currentRoom, socket.id)
+
+        socket.join(currentRoom.uid)
+        socket.to(currentRoom.uid).emit("someoneJoined", "Le joueur " + currentUser.username + " vient de rentrer dans la room " + currentRoom.genre)
+
+        //console.log(user, room)
+        //console.log('env', users, rooms)
 
         /*const user = userJoin(socket.id,userName,room,0,playerImg,false);
         socket.join(user.room);

@@ -30,7 +30,9 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         token: {
-            type: DataTypes.STRING
+            unique: true,
+            type: DataTypes.STRING,
+            allowNull: false
         }
     }, {
         // Other model options go here

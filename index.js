@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express')
 const express = require('express')
 const { Server } = require("socket.io")
 const { createServer } = require("http")
+const Music = require('./controllers/Music')
 const cors = require('cors')
 require("dotenv/config")
 
@@ -23,10 +24,13 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions)
 app.use(express.json())
 app.use(cors())
 
+global.SpotifyToken = ''
+Music.AuthCron()
+
 //=== ROUTES
 app.use("/users", require('./routes/users'))
 app.use("/auth", require('./routes/auth'))
-app.use("/karaoke", require('./routes/karaoke'))
+app.use("/music", require('./routes/music'))
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 //=== SOCKET
