@@ -29,11 +29,8 @@ module.exports = {
         return await bcrypt.compare(pwd, password)
     },
 
-    emailExists : async function(email, res){
-        let user = await UserController.findUserByEmail(email)
-        if(user){
-            return res.status(400).json({message:"Email already exist"})
-        }
+    emailExists : async function(email){
+        return await UserController.findUserByEmail(email)
     },
 
 }

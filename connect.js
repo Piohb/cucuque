@@ -1,14 +1,15 @@
 const { Sequelize } = require('sequelize')
 require("dotenv/config")
 
+let dialectOptions = {
+    ssl: { require: true, rejectUnauthorized: false }
+}
+
+if (process.env.DATABASE_URL.includes('localhost')){ dialectOptions = {} }
+
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: process.env.DB_DIALECT,
-    dialectOptions : {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    },
+    dialectOptions : dialectOptions,
     logging: false
 })
 

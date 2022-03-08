@@ -8,9 +8,13 @@ const { check, error } = require('../utils.js')
 //===
 router.post("/register", validateRegisterForm(), async (req, res) => {
     try {
-        await AuthController.emailExists(req.body.email, res)
+        let alreadyExist = await AuthController.emailExists(req.body.email)
+        if (alreadyExist){
+            return res.status(400).json({message:"Email already exist"})
+        }
+
         let user = await AuthController.register(req.body)
-        res.status(201).json(user)
+        return res.status(201).json(user)
 
     } catch (err) {
         error(res, err)
