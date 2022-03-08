@@ -6,7 +6,7 @@ global.rooms = []
 module.exports = function (socket){
     // on connection
     socket.on("zizi", () => {
-        console.log('zizi')
+        socket.to(socket.id).emit("cucu", 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
     })
 
     // on room connection
@@ -20,12 +20,15 @@ module.exports = function (socket){
     })
 
     socket.on("ready", async (bool) => {
+        console.log('ready', bool)
         users[socket.id].answer = bool
 
         if (bool){
             let ready = true
             const currentRoom = rooms.filter(room => socket.id)[0]
+            console.log(currentRoom.users)
             currentRoom.users.forEach( (id) => {
+                console.log(users[id])
                 if ( !(users[id].answer) ){
                     ready = false
                 }
