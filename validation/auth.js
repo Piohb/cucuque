@@ -41,7 +41,7 @@ module.exports = {
                 errors.email = 'Email is required'
             }
 
-            if (Validator.isEmpty( req.body.password)) {
+            if ('password' in req.body && Validator.isEmpty( req.body.password)) {
                 errors.password = 'Password is required'
             }
 

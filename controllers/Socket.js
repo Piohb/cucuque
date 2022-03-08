@@ -19,6 +19,25 @@ module.exports = function (socket){
         //socket.to(currentRoom.uid).emit("someoneJoined", "Le joueur " + currentUser.username + " vient de rentrer dans la room " + currentRoom.genre)
     })
 
+    socket.on("ready", async (bool) => {
+        users[socket.id].answer = bool
+
+        if (bool){
+            let ready = true
+            const currentRoom = rooms.filter(room => socket.id)[0]
+            currentRoom.users.forEach( (id) => {
+                if ( !(users[id].answer) ){
+                    ready = false
+                }
+            })
+
+            if (ready){
+                Room.startGame(socket, currentRoom)
+            }
+        }
+
+    })
+
     socket.on("disconnect",() => {
         //const currentUser = users[socket.id]
         const currentRoom = Room.leaveRoom(socket)

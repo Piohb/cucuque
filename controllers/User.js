@@ -50,6 +50,16 @@ module.exports = {
         }
     },
 
+    update: async function (user, data){
+        try {
+            user.set({...user, ...data})
+            return await user.save()
+
+        } catch (err) {
+            throw new Error(err)
+        }
+    },
+
     //=== SOCKET USER MODEL
     //  id
     //  username
@@ -64,7 +74,7 @@ module.exports = {
                     'username': user.username,
                     'profile_pic' : user.profile_pic,
                     'score': 0,
-                    'answer': null
+                    'answer': false
                 }
             }
 

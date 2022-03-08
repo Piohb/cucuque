@@ -4,6 +4,7 @@ const AuthController = require('../controllers/Auth')
 const UserController = require('../controllers/User')
 const { validateRegisterForm, validateLoginForm } = require("../validation/auth")
 const { check, error } = require('../utils.js')
+const Crypto = require("crypto");
 
 //===
 router.post("/register", validateRegisterForm(), async (req, res) => {
@@ -37,9 +38,10 @@ router.post("/login", validateLoginForm(), async (req,res) => {
             case 'refresh_token': {
                 check(req.body.refreshToken, 'invalid_request');
                 user = await UserController.findUserByEmail(req.body.email)
-                if (user.refresh_token !== req.body.refreshToken) {
+                if (user.token !== req.body.refreshToken) {
                     throw { code: 500, message: 'invalid_grant' }
                 }
+
                 break
             }
 
@@ -47,11 +49,12 @@ router.post("/login", validateLoginForm(), async (req,res) => {
                 throw { code: 500, message: 'invalid_grant_type' }
         }
 
+        user = await UserController.update(user, {token: Crypto.randomBytes(64).toString('hex')})
         res.status(200).json({
-            access_token: AuthController.generateAccessToken(user),
+            access_token: AuthController.generateToken(user),
             token_type: 'Bearer',
             expires_in: '900',
-            refresh_token: user.refresh_token,
+            refresh_token: user.token,
         });
     } catch (err) {
         error(res, err)

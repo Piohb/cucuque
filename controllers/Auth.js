@@ -16,7 +16,7 @@ module.exports = {
         }
     },
 
-    generateAccessToken : function (user){
+    generateToken : function (user){
         return jwt.sign({ id: user.id, email: user.email }, process.env.PRIVATE_KEY, { expiresIn: `${process.env.TOKEN_EXPIRATION}s` })
     },
 
