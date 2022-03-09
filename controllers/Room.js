@@ -52,7 +52,7 @@ module.exports = {
 
     startGame: async function (room){
         try {
-            console.log('startGame')
+            console.log('startGame', room)
             let playlists = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1", 'GET')
             let playlist = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1&offset=" + random(0, playlists.data.playlists.total - 1), 'GET')
 
