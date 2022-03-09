@@ -16,6 +16,7 @@ module.exports = function (socket){
         Room.joinRoom(currentRoom, socket)
 
         socket.to(currentRoom.uid).emit("someoneJoined", currentUser)
+        console.log(rooms)
         //socket.to(currentRoom.uid).emit("someoneJoined", "Le joueur " + currentUser.username + " vient de rentrer dans la room " + currentRoom.genre)
     })
 
