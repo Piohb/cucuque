@@ -50,7 +50,7 @@ module.exports = {
         return room
     },
 
-    startGame: async function (socket, room){
+    startGame: async function (room){
         try {
             console.log('startGame')
             let playlists = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1", 'GET')
@@ -66,7 +66,8 @@ module.exports = {
                          let r = random(0, res.data.items.length - 1)
                          if(randomTracks.indexOf(r) === -1) { randomTracks.push(res.data.items[r]) }
                      }
-                     this.updateGame(socket, room.uid, 0, randomTracks)
+                     return randomTracks
+                     //this.updateGame(socket, room.uid, 0, randomTracks)
                  })
 
         } catch (err){
@@ -78,8 +79,8 @@ module.exports = {
     updateGame: function (socket, uid, index, tracks){
         if (index < tracks.length - 1){
             //console.log('update',index,tracks[index])
-            console.log(uid)
             socket.to(uid).emit("blindTrack", tracks[index])
+            console.log(tracks[index])
 
             setTimeout( () => {
                 this.updateGame(socket, uid, index+1, tracks)

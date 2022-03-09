@@ -37,7 +37,8 @@ module.exports = function (socket){
             })
 
             if (ready){
-                Room.startGame(socket, currentRoom)
+                let randomTracks = await Room.startGame(socket, currentRoom)
+                Room.updateGame(socket, currentRoom.uid, 0, randomTracks)
             }
         }
 
