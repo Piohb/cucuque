@@ -21,6 +21,7 @@ module.exports = function (socket){
 
     socket.on("ready", async (bool) => {
         console.log('ready', bool)
+        console.log(users, socket.id)
         users[socket.id].answer = bool
 
         if (bool){
