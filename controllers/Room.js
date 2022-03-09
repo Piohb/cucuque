@@ -59,7 +59,7 @@ module.exports = {
             let tracks = await Music.Request(playlist.data.playlists.href, 'GET')
             tracks = tracks.data.playlists.items[0].tracks
 
-             Music.Request(tracks.href, 'GET')
+             return Music.Request(tracks.href, 'GET')
                  .then( (res) => {
                      let randomTracks = []
                      while(randomTracks.length < process.env.DEFAULT_TRACKS){
