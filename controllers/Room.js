@@ -60,15 +60,6 @@ module.exports = {
             tracks = tracks.data.playlists.items[0].tracks
 
              return Music.Request(tracks.href, 'GET')
-                 .then( (res) => {
-                     let randomTracks = []
-                     while(randomTracks.length < process.env.DEFAULT_TRACKS){
-                         let r = random(0, res.data.items.length - 1)
-                         if(randomTracks.indexOf(r) === -1) { randomTracks.push(res.data.items[r]) }
-                     }
-                     return randomTracks
-                     //this.updateGame(socket, room.uid, 0, randomTracks)
-                 })
 
         } catch (err){
             throw err

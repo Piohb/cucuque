@@ -1,5 +1,6 @@
 const User = require('./User')
 const Room = require('./Room')
+const {random} = require("../utils.js");
 global.users = {}
 global.rooms = []
 
@@ -37,7 +38,12 @@ module.exports = function (socket){
             })
 
             if (ready){
-                let randomTracks = await Room.startGame(currentRoom)
+                let res = await Room.startGame(currentRoom)
+                let randomTracks = []
+                while(randomTracks.length < process.env.DEFAULT_TRACKS){
+                    let r = random(0, res.data.items.length - 1)
+                    if(randomTracks.indexOf(r) === -1) { randomTracks.push(res.data.items[r]) }
+                }
                 console.log('aaaa', randomTracks)
                 Room.updateGame(socket, currentRoom.uid, 0, randomTracks)
             }
