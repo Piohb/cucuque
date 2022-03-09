@@ -59,7 +59,17 @@ module.exports = {
             let tracks = await Music.Request(playlist.data.playlists.href, 'GET')
             tracks = tracks.data.playlists.items[0].tracks
 
-             return Music.Request(tracks.href, 'GET')
+            let res = await Music.Request(tracks.href, 'GET')
+            console.log('DIS MOI')
+
+            let randomTracks = []
+            while(randomTracks.length < process.env.DEFAULT_TRACKS){
+                console.log('ici')
+                let r = random(0, res.data.items.length - 1)
+                if(randomTracks.indexOf(r) === -1) { randomTracks.push(res.data.items[r]) }
+            }
+
+            return randomTracks
 
         } catch (err){
             throw err
@@ -67,21 +77,20 @@ module.exports = {
 
     },
 
-    updateGame: function (socket, uid, index, tracks){
+    updateGame: function (io, uid, index, tracks){
         if (index < tracks.length - 1){
-            //console.log('update',index,tracks[index])
-            socket.to(uid).emit("blindTrack", tracks[index])
-            console.log(tracks[index])
+            io.in(uid.uid).emit("blindTrack", tracks[index])
+            console.log('update', tracks[index].track.name)
 
             setTimeout( () => {
-                this.updateGame(socket, uid, index+1, tracks)
-            }, 1000 * 30 )
+                this.updateGame(io, uid, index+1, tracks)
+            }, 1000 * 5 )
         } else {
-            this.endGame(socket, uid)
+            this.endGame(io, uid)
         }
     },
 
-    endGame: function (socket, uid){
+    endGame: function (io, uid){
         console.log('endGame')
         let players = [], room = rooms.filter(room => uid)[0]
         room.users.forEach( (user) => {
@@ -89,7 +98,7 @@ module.exports = {
             players.push(users[user])
         })
 
-        socket.to(uid).emit("endGame", players)
+        io.in(uid).emit("endGame", players)
     },
 
     IsFull: function(uid) {

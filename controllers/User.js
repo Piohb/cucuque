@@ -67,7 +67,7 @@ module.exports = {
     //  score
     //  answer
     socket:{
-        findOrCreate: async function(id, user){
+        findOrCreate: function(id, user){
             if ( !(id in users) ) {
                 users[id] = {
                     'id': id,

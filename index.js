@@ -34,7 +34,7 @@ app.use("/music", require('./routes/music'))
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 //=== SOCKET
-const socket = require('./controllers/Socket')
+const { socket } = require('./controllers/Socket')(io)
 io.on('connection', socket)
 
 //=== RUN SERVER

@@ -4,63 +4,63 @@ const {random} = require("../utils.js");
 global.users = {}
 global.rooms = []
 
-module.exports = function (socket){
-    // on connection
-    socket.on("zizi", () => {
-        socket.to(socket.id).emit("cucu", 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-    })
+module.exports = (io) => {
 
-    // on room connection
-    socket.on("joinRoom", async ({genre, user}) => {
-        const currentRoom = Room.findOrCreate(genre)
-        const currentUser = await User.socket.findOrCreate(socket.id, user)
-        Room.joinRoom(currentRoom, socket)
+    const socket = (socket) => {
+        // on connection
+        socket.on("zizi", () => {
+            socket.to(socket.id).emit("cucu", 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+        })
 
-        socket.to(currentRoom.uid).emit("someoneJoined", currentUser)
-        console.log(rooms)
-        //socket.to(currentRoom.uid).emit("someoneJoined", "Le joueur " + currentUser.username + " vient de rentrer dans la room " + currentRoom.genre)
-    })
+        // on room connection
+        socket.on("joinRoom", ({genre, user}) => {
+            const currentRoom = Room.findOrCreate(genre)
+            const currentUser = User.socket.findOrCreate(socket.id, user)
+            Room.joinRoom(currentRoom, socket)
 
-    socket.on("ready", async (bool) => {
-        console.log('ready', bool)
-        //console.log(users, socket.id)
-        users[socket.id].answer = bool
+            io.in(currentRoom.uid).emit("someoneJoined", currentUser)
+            console.log(rooms)
+            //socket.to(currentRoom.uid).emit("someoneJoined", "Le joueur " + currentUser.username + " vient de rentrer dans la room " + currentRoom.genre)
+        })
 
-        if (bool){
-            let ready = true
-            const currentRoom = rooms.filter(room => socket.id)[0]
-            console.log(currentRoom.users)
-            currentRoom.users.forEach( (id) => {
-                console.log(users[id])
-                if ( !(users[id].answer) ){
-                    ready = false
+        socket.on("ready", async (bool) => {
+            console.log('ready', bool)
+            //console.log(users, socket.id)
+            users[socket.id].answer = bool
+
+            if (bool){
+                let ready = true
+                const currentRoom = rooms.filter(room => socket.id)[0]
+                console.log(currentRoom.users)
+                currentRoom.users.forEach( (id) => {
+                    console.log(users[id])
+                    if ( !(users[id].answer) ){
+                        ready = false
+                    }
+                })
+
+                if (ready){
+                    let randomTracks = await Room.startGame(currentRoom)
+                    console.log('aaaa', randomTracks.length)
+                    Room.updateGame(io, currentRoom, 0, randomTracks)
                 }
-            })
-
-            if (ready){
-                let res = await Room.startGame(currentRoom)
-                let randomTracks = []
-                while(randomTracks.length < process.env.DEFAULT_TRACKS){
-                    let r = random(0, res.data.items.length - 1)
-                    if(randomTracks.indexOf(r) === -1) { randomTracks.push(res.data.items[r]) }
-                }
-                console.log('aaaa', randomTracks)
-                Room.updateGame(socket, currentRoom.uid, 0, randomTracks)
             }
-        }
 
-    })
+        })
 
-    socket.on("leaveRoom", () => {
-        const currentRoom = Room.leaveRoom(socket)
-        socket.to(currentRoom.uid).emit("someoneLeaved", socket.id)
-    })
+        socket.on("leaveRoom", () => {
+            const currentRoom = Room.leaveRoom(socket)
+            io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
+        })
 
-    socket.on("disconnect", () => {
-        //const currentUser = users[socket.id]
-        const currentRoom = Room.leaveRoom(socket)
+        socket.on("disconnect", () => {
+            //const currentUser = users[socket.id]
+            const currentRoom = Room.leaveRoom(socket)
 
-        socket.to(currentRoom.uid).emit("someoneLeaved", socket.id)
-        //socket.to(currentRoom.uid).emit("someoneLeaved", "Le joueur " + currentUser.username + " vient de quitter la room " + currentRoom.genre)
-    })
+            io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
+            //socket.to(currentRoom.uid).emit("someoneLeaved", "Le joueur " + currentUser.username + " vient de quitter la room " + currentRoom.genre)
+        })
+    }
+
+    return { socket }
 }
