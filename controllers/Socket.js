@@ -22,7 +22,7 @@ module.exports = function (socket){
 
     socket.on("ready", async (bool) => {
         console.log('ready', bool)
-        console.log(users, socket.id)
+        //console.log(users, socket.id)
         users[socket.id].answer = bool
 
         if (bool){
@@ -43,7 +43,12 @@ module.exports = function (socket){
 
     })
 
-    socket.on("disconnect",() => {
+    socket.on("leaveRoom", () => {
+        const currentRoom = Room.leaveRoom(socket)
+        socket.to(currentRoom.uid).emit("someoneLeaved", socket.id)
+    })
+
+    socket.on("disconnect", () => {
         //const currentUser = users[socket.id]
         const currentRoom = Room.leaveRoom(socket)
 
