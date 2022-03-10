@@ -11,8 +11,6 @@ require("dotenv/config")
 //  trackTime
 //  users
 //  full
-//  cron
-
 
 module.exports = {
 
@@ -45,20 +43,20 @@ module.exports = {
     },
 
     leaveRoom: function (socket){
-        console.log('leaveRoom', rooms.filter(room => socket.id)[0])
-        let room = rooms.filter(room => socket.id)[0]
+        console.log('leaveRoom', rooms.filter(room => room.users.includes(socket.id))[0])
+        let room = rooms.filter(room => room.users.includes(socket.id))[0]
         let index = room['users'].indexOf(socket.id)
         if (index > -1) { room['users'].splice(index, 1) }
 
         socket.leave(room.uid)
         this.IsFull(room.uid)
-        console.log(rooms)
+        //console.log(rooms)
         return room
     },
 
     startGame: async function (room){
         try {
-            console.log('startGame', room)
+            console.log('startGame', room.genre)
             let playlists = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1", 'GET')
             let playlist = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1&offset=" + random(0, playlists.data.playlists.total - 1), 'GET')
 
@@ -89,8 +87,8 @@ module.exports = {
 
     updateGame: function (io, uid, index, tracks){
         console.log('updateGame')
-        let currentRoom = rooms.filter(room => uid)[0]
-        currentRoom.cron = new CronJob('*/32 * * * * *', () => {
+        let currentRoom = rooms.filter(room => room.uid === uid)[0]
+        tasks[currentRoom.uid] = new CronJob('*/32 * * * * *', () => {
             if (index < tracks.length - 1){
                 io.in(uid).emit("blindTrack", tracks[index])
                 currentRoom.currentTrack = tracks[index]
@@ -106,17 +104,17 @@ module.exports = {
                 index++
             } else {
                 this.endGame(io, uid)
-                currentRoom.cron.stop();
+                tasks[currentRoom.uid].stop();
             }
         }, null, true, 'Europe/Paris')
 
-        currentRoom.cron.start()
+        tasks[currentRoom.uid].start()
 
     },
 
     endGame: function (io, uid){
         console.log('endGame')
-        let players = [], room = rooms.filter(room => uid)[0]
+        let players = [], room = rooms.filter(room => room.uid === uid)[0]
         room.currentTrack = null
         room.timestamp = null
         room.users.forEach( (user) => {
@@ -129,7 +127,7 @@ module.exports = {
     },
 
     IsFull: function(uid) {
-        let room = rooms.filter(room => uid)[0]
+        let room = rooms.filter(room => room.uid === uid)[0]
         room.full = room.users.length >= process.env.DEFAULT_MAXIMUM
     }
 }

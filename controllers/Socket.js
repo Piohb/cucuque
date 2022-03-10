@@ -3,6 +3,7 @@ const Room = require('./Room')
 const {random} = require("../utils.js");
 global.users = {}
 global.rooms = []
+global.tasks = {}
 
 module.exports = (io) => {
 
@@ -31,7 +32,7 @@ module.exports = (io) => {
 
             if (bool){
                 let ready = true
-                const currentRoom = rooms.filter(room => socket.id)[0]
+                const currentRoom = rooms.filter(room => room.users.includes(socket.id))[0]
                 console.log(currentRoom.users)
                 currentRoom.users.forEach( (id) => {
                     console.log(users[id])
@@ -52,7 +53,7 @@ module.exports = (io) => {
         socket.on("sendAnswer", async (answer) => {
             console.log(answer)
             let timestamp = Math.round(new Date().getTime())
-            const currentRoom = rooms.filter(room => socket.id)[0]
+            const currentRoom = rooms.filter(room => room.users.includes(socket.id))[0]
             if ( (timestamp - currentRoom.timestamp) <= 30000 ){
                 console.log('timestamp', currentRoom.currentTrack)
                 if (currentRoom.currentTrack.track.name === answer){
@@ -67,8 +68,8 @@ module.exports = (io) => {
         socket.on("leaveRoom", () => {
             let currentRoom = Room.leaveRoom(socket)
             io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
-            if (currentRoom.users.length === 0 && currentRoom.cron){
-                currentRoom.cron.stop()
+            if (currentRoom.users.length === 0 && tasks[currentRoom.uid]){
+                tasks[currentRoom.uid].stop()
                 rooms = rooms.filter(room => room.uid !== currentRoom.uid)
                 console.log('deleteRoom', rooms)
             }
@@ -78,8 +79,8 @@ module.exports = (io) => {
             console.log('disconnected', socket.id)
             const currentRoom = Room.leaveRoom(socket)
             io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
-            if (currentRoom.users.length === 0 && currentRoom.cron){
-                currentRoom.cron.stop()
+            if (currentRoom.users.length === 0 && tasks[currentRoom.uid]){
+                tasks[currentRoom.uid].stop()
                 rooms = rooms.filter(room => room.uid !== currentRoom.uid)
                 console.log('deleteRoom', rooms)
             }
