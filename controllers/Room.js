@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid')
 const Music = require('../controllers/Music')
 const { random } = require('../utils.js')
+const cron = require('node-cron')
 require("dotenv/config")
 
 //=== SOCKET ROOM MODEL
@@ -84,20 +85,21 @@ module.exports = {
     },
 
     updateGame: function (io, uid, index, tracks){
-        if (index < tracks.length - 1){
-            io.in(uid).emit("blindTrack", tracks[index])
-            let currentRoom = rooms.filter(room => uid)[0]
-            currentRoom.currentTrack = tracks[index]
-            currentRoom.timestamp = Math.round(new Date().getTime())
+        let updateCron = cron.schedule('*/30 * * * * *', () => {
+            if (index < tracks.length - 1){
+                io.in(uid).emit("blindTrack", tracks[index])
+                let currentRoom = rooms.filter(room => uid)[0]
+                currentRoom.currentTrack = tracks[index]
+                currentRoom.timestamp = Math.round(new Date().getTime())
+                console.log('update', tracks[index].track.name)
+                index++
+            } else {
+                updateCron.stop()
+                this.endGame(io, uid)
+            }
+        },{ scheduled: true, timezone: 'Europe/Paris' })
 
-            console.log('update', tracks[index].track.name)
-
-            setTimeout( () => {
-                this.updateGame(io, uid, index+1, tracks)
-            }, 1000 * 5 )
-        } else {
-            this.endGame(io, uid)
-        }
+        updateCron.start()
     },
 
     endGame: function (io, uid){
