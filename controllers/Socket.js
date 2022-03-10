@@ -14,9 +14,9 @@ module.exports = (io) => {
 
         // on room connection
         socket.on("joinRoom", ({genre, user}) => {
-            const currentRoom = Room.findOrCreate(genre)
-            const currentUser = User.socket.findOrCreate(socket.id, user)
-            Room.joinRoom(currentRoom, socket)
+            let currentRoom = Room.findOrCreate(genre)
+            let currentUser = User.socket.findOrCreate(socket.id, user)
+            Room.joinRoom(socket, currentRoom)
 
             io.in(currentRoom.uid).emit("someoneJoined", currentUser)
             console.log(rooms)
@@ -39,7 +39,7 @@ module.exports = (io) => {
 
                 if (ready){
                     let randomTracks = await Room.startGame(currentRoom)
-                    console.log(socket.id, 'aaaa', randomTracks.length)
+                    console.log('aaaa', randomTracks.length)
                     Room.updateGame(io, currentRoom.uid, 0, randomTracks)
                 }
             }

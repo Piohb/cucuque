@@ -13,7 +13,7 @@ require("dotenv/config")
 module.exports = {
 
     findOrCreate: function(genre){
-        let condition = rooms.filter(room => room.genre === genre && !room.full )
+        let condition = rooms.filter( room => room.genre === genre && !room.full )
 
         if (condition.length === 0){
             rooms.push({
@@ -28,18 +28,15 @@ module.exports = {
         return rooms[rooms.length - 1]
     },
 
-    joinRoom: function(room, socket) {
-        let uid = room.uid
-
+    joinRoom: function(socket, room) {
         if (!room.full){
-            rooms.filter(room => uid)[0].users.push(socket.id)
+            rooms.filter(filteredRoom => filteredRoom.uid === room.uid)[0].users.push(socket.id)
         } else {
-            let room = this.findOrCreate(room.genre)
-            uid = room.uid
+            room = this.findOrCreate(room.genre)
         }
 
         socket.join(room.uid)
-        this.IsFull(uid)
+        this.IsFull(room.uid)
     },
 
     leaveRoom: function (socket){
@@ -87,7 +84,6 @@ module.exports = {
             io.in(uid).emit("blindTrack", tracks[index])
             rooms.filter(room => uid)[0].currentTrack = tracks[index]
             console.log('update', tracks[index].track.name)
-            console.log(uid,)
 
             setTimeout( () => {
                 this.updateGame(io, uid, index+1, tracks)
