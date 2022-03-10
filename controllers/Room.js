@@ -88,25 +88,33 @@ module.exports = {
     updateGame: function (io, uid, index, tracks){
         console.log('updateGame')
         let currentRoom = rooms.filter(room => room.uid === uid)[0]
-        tasks[currentRoom.uid] = new CronJob('*/32 * * * * *', () => {
-            if (index < tracks.length - 1){
-                io.in(uid).emit("blindTrack", tracks[index])
-                currentRoom.currentTrack = tracks[index]
-                currentRoom.timestamp = Math.round(new Date().getTime())
-                currentRoom.users.forEach(user => {
-                    users[user].answers = {
-                        ready: true,
-                        asArtist: false,
-                        asSong: false
-                    }
-                })
-                console.log(currentRoom.genre, 'update', tracks[index].track.name)
-                index++
-            } else {
-                this.endGame(io, uid)
-                tasks[currentRoom.uid].stop();
-            }
-        }, null, false, 'Europe/Paris', tasks[currentRoom.uid], true)
+        let cron = {
+            cronTime: '*/10 * * * * *',
+            onTick: () => {
+                if (index < tracks.length - 1) {
+                    io.in(uid).emit("blindTrack", tracks[index])
+                    currentRoom.currentTrack = tracks[index]
+                    currentRoom.timestamp = Math.round(new Date().getTime())
+                    currentRoom.users.forEach(user => {
+                        users[user].answers = {
+                            ready: true,
+                            asArtist: false,
+                            asSong: false
+                        }
+                    })
+                    console.log(currentRoom.genre, 'update', tracks[index].track.name)
+                    index++
+                } else {
+                    this.endGame(io, uid)
+                    tasks[currentRoom.uid].stop();
+                }
+            },
+            start: true,
+            runOnInit: true,
+            timeZone: 'Europe/Paris'
+        }
+
+        tasks[currentRoom.uid] = new CronJob(cron)
 
     },
 
@@ -122,6 +130,19 @@ module.exports = {
         })
 
         io.in(uid).emit("endGame", players)
+    },
+
+    answerRegex: function (answer, track, uid){
+        console.log('regex', answer)
+        //let banWords = ['mix','remix','mono version', 'stereo version', 'radio edit', 'remastered','feat', 'featuring']
+        // bannir remix, remastered, featuring et () ou -
+        // delete espace et accents
+        // tolowercase
+        // naturalStringDistance si en dessous de 2 fautes
+        // phonétique return true alors juste
+
+        let cleanAnswer = answer.replace(/\-\s(.*)|\((.*?)\)/gis, '')
+        console.log(cleanAnswer)
     },
 
     IsFull: function(uid) {

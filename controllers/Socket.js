@@ -54,14 +54,16 @@ module.exports = (io) => {
             console.log(answer)
             let timestamp = Math.round(new Date().getTime())
             const currentRoom = rooms.filter(room => room.users.includes(socket.id))[0]
+            console.log(currentRoom)
             if ( (timestamp - currentRoom.timestamp) <= 30000 ){
                 console.log('timestamp', currentRoom.currentTrack)
-                if (currentRoom.currentTrack.track.name === answer){
+                Room.answerRegex(answer, currentRoom.currentTrack, currentRoom.uid)
+                /*if (currentRoom.currentTrack.track.name === answer){
                     users[socket.id].answers.asSong = true
                     users[socket.id].score++
                     console.log('good answer', users)
                     io.in(currentRoom.uid).emit("scores", users[socket.id])
-                }
+                }*/
             }
         })
 
