@@ -88,14 +88,13 @@ module.exports = {
 
     updateGame: function (io, uid, index, tracks){
         console.log('updateGame')
-        let currentRoom = rooms.filter(room => uid)[0]
-
         let updateCron = new CronJob('*/30 * * * * *', () => {
             if (index < tracks.length - 1){
                 io.in(uid).emit("blindTrack", tracks[index])
+                let currentRoom = rooms.filter(room => uid)[0]
                 currentRoom.currentTrack = tracks[index]
                 currentRoom.timestamp = Math.round(new Date().getTime())
-                console.log(currentRoom.uid, 'update', tracks[index].track.name)
+                console.log(currentRoom.genre, 'update', tracks[index].track.name)
                 index++
             } else {
                 this.endGame(io, uid)
