@@ -51,11 +51,12 @@ module.exports = (io) => {
         })
 
         socket.on("leaveRoom", () => {
-            const currentRoom = Room.leaveRoom(socket)
+            let currentRoom = Room.leaveRoom(socket)
             io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
         })
 
         socket.on("disconnect", () => {
+            console.log('disconnected', socket.id)
             const currentRoom = Room.leaveRoom(socket)
             io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
         })

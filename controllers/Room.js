@@ -40,12 +40,14 @@ module.exports = {
     },
 
     leaveRoom: function (socket){
+        console.log('leaveRoom', rooms.filter(room => socket.id)[0])
         let room = rooms.filter(room => socket.id)[0]
         let index = room['users'].indexOf(socket.id)
         if (index > -1) { room['users'].splice(index, 1) }
 
         socket.leave(room.uid)
         this.IsFull(room.uid)
+        console.log(rooms)
         return room
     },
 
@@ -60,7 +62,7 @@ module.exports = {
             tracks = tracks.data.playlists.items[0].tracks
 
             console.log(tracks.href)
-            let res = await Music.Request(tracks.href + '?market=FR&fields=items(track(name, preview_url, album(images), artists))', 'GET')
+            let res = await Music.Request(tracks.href + '?market=FR&fields=items(track(id, name, preview_url, album(images), artists))', 'GET')
 
             let randomTracks = []
             while(randomTracks.length < process.env.DEFAULT_TRACKS){
