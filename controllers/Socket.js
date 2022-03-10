@@ -39,10 +39,14 @@ module.exports = (io) => {
 
                 if (ready){
                     let randomTracks = await Room.startGame(currentRoom)
-                    console.log('aaaa', randomTracks.length)
-                    Room.updateGame(io, currentRoom, 0, randomTracks)
+                    console.log(socket.id, 'aaaa', randomTracks.length)
+                    Room.updateGame(io, currentRoom.uid, 0, randomTracks)
                 }
             }
+
+        })
+
+        socket.on("answer", async (answer) => {
 
         })
 

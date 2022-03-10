@@ -6,6 +6,7 @@ require("dotenv/config")
 //=== SOCKET ROOM MODEL
 //  id
 //  genre
+//  currentTrack
 //  users
 //  full
 
@@ -18,6 +19,7 @@ module.exports = {
             rooms.push({
                 'uid': uuidv4(),
                 'genre': genre,
+                'currentTrack': null,
                 'users': [],
                 'full': false,
             })
@@ -67,7 +69,9 @@ module.exports = {
             while(randomTracks.length < process.env.DEFAULT_TRACKS){
                 console.log('ici')
                 let r = random(0, res.data.items.length - 1)
-                if(randomTracks.indexOf(r) === -1) { randomTracks.push(res.data.items[r]) }
+                if(randomTracks.indexOf(r) === -1 && res.data.items[r].track.preview_url) {
+                    randomTracks.push(res.data.items[r])
+                }
             }
 
             return randomTracks
@@ -80,8 +84,10 @@ module.exports = {
 
     updateGame: function (io, uid, index, tracks){
         if (index < tracks.length - 1){
-            io.in(uid.uid).emit("blindTrack", tracks[index])
+            io.in(uid).emit("blindTrack", tracks[index])
+            rooms.filter(room => uid)[0].currentTrack = tracks[index]
             console.log('update', tracks[index].track.name)
+            console.log(uid,)
 
             setTimeout( () => {
                 this.updateGame(io, uid, index+1, tracks)
@@ -94,6 +100,7 @@ module.exports = {
     endGame: function (io, uid){
         console.log('endGame')
         let players = [], room = rooms.filter(room => uid)[0]
+        room.currentTrack = null
         room.users.forEach( (user) => {
             users[user].answers.ready = false
             players.push(users[user])
