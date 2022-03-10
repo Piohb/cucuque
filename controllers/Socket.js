@@ -22,6 +22,7 @@ module.exports = (io) => {
             currentRoom.users.forEach( (user) => {
                 players.push(users[user])
             })
+            io.to(socket.id).emit("myLittleSocket", socket.id)
             io.in(currentRoom.uid).emit("someoneJoined", players)
             console.log(rooms)
         })
@@ -57,13 +58,15 @@ module.exports = (io) => {
             console.log(currentRoom)
             if ( (timestamp - currentRoom.timestamp) <= 30000 ){
                 console.log('timestamp', currentRoom.currentTrack)
-                Room.answerRegex(answer, currentRoom.currentTrack, currentRoom.uid)
-                /*if (currentRoom.currentTrack.track.name === answer){
-                    users[socket.id].answers.asSong = true
-                    users[socket.id].score++
-                    console.log('good answer', users)
-                    io.in(currentRoom.uid).emit("scores", users[socket.id])
-                }*/
+                users[socket.id].answers = Room.answerRegex(answer, currentRoom.currentTrack, currentRoom.uid)
+
+                for (const [key, value] of users[socket.id].answers){
+                    if (key === 'ready') { continue }
+                    io.to(socket.id).emit(key, value)
+                    users[socket.id].score = value ? users[socket.id].score++ : users[socket.id].score
+                }
+
+                io.in(currentRoom.uid).emit("scores", users[socket.id])
             }
         })
 

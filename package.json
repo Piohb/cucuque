@@ -29,6 +29,7 @@
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
+    "natural": "^5.1.13",
     "pg": "^8.7.3",
     "sequelize": "^6.16.1",
     "socket.io": "^4.4.1",

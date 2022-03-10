@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require('uuid')
 const Music = require('../controllers/Music')
 const { random } = require('../utils.js')
 const CronJob = require('cron').CronJob
+const natural = require('natural')
 require("dotenv/config")
 
 //=== SOCKET ROOM MODEL
@@ -89,7 +90,7 @@ module.exports = {
         console.log('updateGame')
         let currentRoom = rooms.filter(room => room.uid === uid)[0]
         let cron = {
-            cronTime: '*/10 * * * * *',
+            cronTime: '*/30 * * * * *',
             onTick: () => {
                 if (index < tracks.length - 1) {
                     io.in(uid).emit("blindTrack", tracks[index])
@@ -102,7 +103,7 @@ module.exports = {
                             asSong: false
                         }
                     })
-                    console.log(currentRoom.genre, 'update', tracks[index].track.name)
+                    console.log(currentRoom.genre, 'update', tracks[index].track.name, '|', tracks[index].track.artists[0].name)
                     index++
                 } else {
                     this.endGame(io, uid)
@@ -132,7 +133,7 @@ module.exports = {
         io.in(uid).emit("endGame", players)
     },
 
-    answerRegex: function (answer, track, uid){
+    answerRegex: function (answer, currentTrack, uid){
         console.log('regex', answer)
         //let banWords = ['mix','remix','mono version', 'stereo version', 'radio edit', 'remastered','feat', 'featuring']
         // bannir remix, remastered, featuring et () ou -
@@ -141,8 +142,28 @@ module.exports = {
         // naturalStringDistance si en dessous de 2 fautes
         // phonétique return true alors juste
 
-        let cleanAnswer = answer.replace(/\-\s(.*)|\((.*?)\)/gis, '')
-        console.log(cleanAnswer)
+        let asSong = false, asArtist = false
+        let cleanAnswer = this.Normalize(answer)
+        let cleanTrackName = this.Normalize(currentTrack.track.name)
+        let cleanArtist = this.Normalize(currentTrack.track.artists[0].name)
+
+        console.log('clean:', cleanAnswer, '|', cleanTrackName, '|', cleanArtist)
+
+        let findTrackName = natural.LevenshteinDistanceSearch(cleanTrackName, cleanAnswer)
+        if (findTrackName.distance <= 3){ asSong = true }
+        console.log('song', findTrackName, asSong)
+
+        let findArtist = natural.LevenshteinDistanceSearch(cleanArtist, cleanAnswer)
+        if (findArtist.distance <= 3){ asArtist = true }
+        console.log('artist', findArtist, asArtist)
+
+        return { ready: true, asSong: asSong, asArtist: asArtist}
+    },
+
+    Normalize: function (text){
+        text = text.replace(/-\s(.*)|\((.*?)\)/gis, '')
+        text = text.toLowerCase()
+        return text.normalize("NFD").replace(/\p{Diacritic}/gu, "")
     },
 
     IsFull: function(uid) {
