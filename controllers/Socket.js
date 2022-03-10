@@ -66,12 +66,22 @@ module.exports = (io) => {
         socket.on("leaveRoom", () => {
             let currentRoom = Room.leaveRoom(socket)
             io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
+            if (currentRoom.users.length === 0 && currentRoom.cron){
+                currentRoom.cron.stop()
+                rooms = rooms.filter(room => room.uid !== currentRoom.uid)
+                console.log('deleteRoom', rooms)
+            }
         })
 
         socket.on("disconnect", () => {
             console.log('disconnected', socket.id)
             const currentRoom = Room.leaveRoom(socket)
             io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
+            if (currentRoom.users.length === 0 && currentRoom.cron){
+                currentRoom.cron.stop()
+                rooms = rooms.filter(room => room.uid !== currentRoom.uid)
+                console.log('deleteRoom', rooms)
+            }
         })
     }
 
