@@ -103,7 +103,7 @@ module.exports = {
             }
         }, null, true, 'Europe/Paris')
 
-        updateCron.start()
+        currentRoom.cron.start()
 
     },
 
