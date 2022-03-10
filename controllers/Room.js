@@ -106,9 +106,7 @@ module.exports = {
                 this.endGame(io, uid)
                 tasks[currentRoom.uid].stop();
             }
-        }, null, true, 'Europe/Paris')
-
-        tasks[currentRoom.uid].start()
+        }, null, false, 'Europe/Paris', tasks[currentRoom.uid], true)
 
     },
 
