@@ -95,7 +95,7 @@ module.exports = {
                 io.in(uid).emit("blindTrack", tracks[index])
                 currentRoom.currentTrack = tracks[index]
                 currentRoom.timestamp = Math.round(new Date().getTime())
-                console.log('update', tracks[index].track.name)
+                console.log(currentRoom.uid, 'update', tracks[index].track.name)
                 index++
             } else {
                 this.endGame(io, uid)
