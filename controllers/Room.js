@@ -24,6 +24,7 @@ module.exports = {
                 'uid': uuidv4(),
                 'genre': genre,
                 'currentTrack': null,
+                'timestamp': null,
                 'users': [],
                 'full': false,
             })
@@ -110,8 +111,10 @@ module.exports = {
         console.log('endGame')
         let players = [], room = rooms.filter(room => uid)[0]
         room.currentTrack = null
+        room.timestamp = null
         room.users.forEach( (user) => {
             users[user].answers.ready = false
+            users[user].score = 0
             players.push(users[user])
         })
 
