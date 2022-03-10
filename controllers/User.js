@@ -65,7 +65,7 @@ module.exports = {
     //  username
     //  profile_pic
     //  score
-    //  answer
+    //  answers : { ready, asArtist, asSong }
     socket:{
         findOrCreate: function(id, user){
             if ( !(id in users) ) {
@@ -74,7 +74,11 @@ module.exports = {
                     'username': user.username,
                     'profile_pic' : user.profile_pic,
                     'score': 0,
-                    'answer': false
+                    'answers': {
+                        'ready': false,
+                        'asArtist': false,
+                        'asSong': false
+                    }
                 }
             }
 

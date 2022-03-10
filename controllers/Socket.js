@@ -20,13 +20,11 @@ module.exports = (io) => {
 
             io.in(currentRoom.uid).emit("someoneJoined", currentUser)
             console.log(rooms)
-            //socket.to(currentRoom.uid).emit("someoneJoined", "Le joueur " + currentUser.username + " vient de rentrer dans la room " + currentRoom.genre)
         })
 
         socket.on("ready", async (bool) => {
             console.log('ready', bool)
-            //console.log(users, socket.id)
-            users[socket.id].answer = bool
+            users[socket.id].answers.ready = bool
 
             if (bool){
                 let ready = true
@@ -34,7 +32,7 @@ module.exports = (io) => {
                 console.log(currentRoom.users)
                 currentRoom.users.forEach( (id) => {
                     console.log(users[id])
-                    if ( !(users[id].answer) ){
+                    if ( !(users[id].answers.ready) ){
                         ready = false
                     }
                 })
@@ -54,11 +52,8 @@ module.exports = (io) => {
         })
 
         socket.on("disconnect", () => {
-            //const currentUser = users[socket.id]
             const currentRoom = Room.leaveRoom(socket)
-
             io.in(currentRoom.uid).emit("someoneLeaved", socket.id)
-            //socket.to(currentRoom.uid).emit("someoneLeaved", "Le joueur " + currentUser.username + " vient de quitter la room " + currentRoom.genre)
         })
     }
 

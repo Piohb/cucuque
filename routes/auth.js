@@ -41,7 +41,6 @@ router.post("/login", validateLoginForm(), async (req,res) => {
                 if (user.token !== req.body.refreshToken) {
                     throw { code: 500, message: 'invalid_grant' }
                 }
-
                 break
             }
 
@@ -51,6 +50,8 @@ router.post("/login", validateLoginForm(), async (req,res) => {
 
         user = await UserController.update(user, {token: Crypto.randomBytes(64).toString('hex')})
         res.status(200).json({
+            username: user.username,
+            profile_pic: user.profile_pic,
             access_token: AuthController.generateToken(user),
             token_type: 'Bearer',
             expires_in: '900',

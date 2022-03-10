@@ -56,11 +56,12 @@ module.exports = {
             let playlists = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1", 'GET')
             let playlist = await Music.Request("https://api.spotify.com/v1/browse/categories/" + room.genre + "/playlists?country=FR&limit=1&offset=" + random(0, playlists.data.playlists.total - 1), 'GET')
 
+            console.log(playlist.data.playlists.href)
             let tracks = await Music.Request(playlist.data.playlists.href, 'GET')
             tracks = tracks.data.playlists.items[0].tracks
 
-            let res = await Music.Request(tracks.href, 'GET')
-            console.log('DIS MOI')
+            console.log(tracks.href)
+            let res = await Music.Request(tracks.href + '?market=FR&fields=items(track(name, preview_url, album(images), artists))', 'GET')
 
             let randomTracks = []
             while(randomTracks.length < process.env.DEFAULT_TRACKS){
@@ -94,7 +95,7 @@ module.exports = {
         console.log('endGame')
         let players = [], room = rooms.filter(room => uid)[0]
         room.users.forEach( (user) => {
-            users[user].answer = false
+            users[user].answers.ready = false
             players.push(users[user])
         })
 
