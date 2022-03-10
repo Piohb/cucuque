@@ -18,7 +18,7 @@ module.exports = (io) => {
             let currentUser = User.socket.findOrCreate(socket.id, user)
             Room.joinRoom(socket, currentRoom)
 
-            io.in(currentRoom.uid).emit("someoneJoined", currentUser)
+            io.in(currentRoom.uid).emit("someoneJoined", socket.clients(currentRoom.uid))
             console.log(rooms)
         })
 
