@@ -7,6 +7,7 @@ require("dotenv/config")
 //  id
 //  genre
 //  currentTrack
+//  trackTime
 //  users
 //  full
 
@@ -65,12 +66,13 @@ module.exports = {
             let res = await Music.Request(tracks.href + '?market=FR&fields=items(track(id, name, preview_url, album(images), artists))', 'GET')
 
             let randomTracks = []
+
             while(randomTracks.length < process.env.DEFAULT_TRACKS){
-                console.log('ici')
                 let r = random(0, res.data.items.length - 1)
-                if(randomTracks.indexOf(r) === -1 && res.data.items[r].track.preview_url) {
+                if( (randomTracks.filter(randomTrack => randomTrack.track.id === res.data.items[r].track.id).length === 0) && (res.data.items[r].track.preview_url) ){
                     randomTracks.push(res.data.items[r])
                 }
+                console.log('ici', res.data.items[r].track.id)
             }
 
             return randomTracks
@@ -84,7 +86,10 @@ module.exports = {
     updateGame: function (io, uid, index, tracks){
         if (index < tracks.length - 1){
             io.in(uid).emit("blindTrack", tracks[index])
-            rooms.filter(room => uid)[0].currentTrack = tracks[index]
+            let currentRoom = rooms.filter(room => uid)[0]
+            currentRoom.currentTrack = tracks[index]
+            currentRoom.timestamp = Math.round(new Date().getTime())
+
             console.log('update', tracks[index].track.name)
 
             setTimeout( () => {
