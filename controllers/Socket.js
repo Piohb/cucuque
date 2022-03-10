@@ -17,8 +17,11 @@ module.exports = (io) => {
             let currentRoom = Room.findOrCreate(genre)
             let currentUser = User.socket.findOrCreate(socket.id, user)
             Room.joinRoom(socket, currentRoom)
-
-            io.in(currentRoom.uid).emit("someoneJoined", socket.clients(currentRoom.uid))
+            let players = []
+            currentRoom.users.forEach( (user) => {
+                players.push(users[user])
+            })
+            io.in(currentRoom.uid).emit("someoneJoined", players)
             console.log(rooms)
         })
 
@@ -48,6 +51,12 @@ module.exports = (io) => {
 
         socket.on("sendAnswer", async (answer) => {
             console.log(answer)
+            let timestamp = Math.round(new Date().getTime())
+            const currentRoom = rooms.filter(room => socket.id)[0]
+            if ( (timestamp - currentRoom.timestamp) <= 30000 ){
+
+            }
+
         })
 
         socket.on("leaveRoom", () => {
