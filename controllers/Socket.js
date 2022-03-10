@@ -46,8 +46,8 @@ module.exports = (io) => {
 
         })
 
-        socket.on("answer", async (answer) => {
-
+        socket.on("sendAnswer", async (answer) => {
+            console.log(answer)
         })
 
         socket.on("leaveRoom", () => {
