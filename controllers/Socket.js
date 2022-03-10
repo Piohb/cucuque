@@ -55,7 +55,7 @@ module.exports = (io) => {
             const currentRoom = rooms.filter(room => socket.id)[0]
             if ( (timestamp - currentRoom.timestamp) <= 30000 ){
                 console.log('timestamp', currentRoom.currentTrack)
-                if (currentRoom.currentTrack.name === answer){
+                if (currentRoom.currentTrack.track.name === answer){
                     users[socket.id].score++
                     console.log('good answer', users)
                 }
