@@ -95,6 +95,13 @@ module.exports = {
                 io.in(uid).emit("blindTrack", tracks[index])
                 currentRoom.currentTrack = tracks[index]
                 currentRoom.timestamp = Math.round(new Date().getTime())
+                currentRoom.users.forEach(user => {
+                    users[user].answers = {
+                        ready: true,
+                        asArtist: false,
+                        asSong: false
+                    }
+                })
                 console.log(currentRoom.genre, 'update', tracks[index].track.name)
                 index++
             } else {

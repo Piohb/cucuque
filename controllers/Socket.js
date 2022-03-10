@@ -56,11 +56,12 @@ module.exports = (io) => {
             if ( (timestamp - currentRoom.timestamp) <= 30000 ){
                 console.log('timestamp', currentRoom.currentTrack)
                 if (currentRoom.currentTrack.track.name === answer){
+                    users[socket.id].answers.asSong = true
                     users[socket.id].score++
                     console.log('good answer', users)
+                    io.in(currentRoom.uid).emit("scores", users[socket.id])
                 }
             }
-
         })
 
         socket.on("leaveRoom", () => {
