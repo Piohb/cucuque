@@ -77,7 +77,8 @@ module.exports = {
                     'answers': {
                         'ready': false,
                         'asArtist': false,
-                        'asSong': false
+                        'asSong': false,
+                        'done': false
                     }
                 }
             }

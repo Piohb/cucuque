@@ -33,12 +33,14 @@ module.exports = {
         return(req, res, next) => {
             let errors = {}
 
-            if ( !(Validator.isEmail( req.body.email)) ) {
-                errors.email = 'Email is invalid'
-            }
+            if ('email' in req.body && req.body.email){
+                if (!(Validator.isEmail( req.body.email)) ) {
+                    errors.email = 'Email is invalid'
+                }
 
-            if (Validator.isEmpty( req.body.email)) {
-                errors.email = 'Email is required'
+                if (Validator.isEmpty( req.body.email)) {
+                    errors.email = 'Email is required'
+                }
             }
 
             if ('password' in req.body && Validator.isEmpty( req.body.password)) {

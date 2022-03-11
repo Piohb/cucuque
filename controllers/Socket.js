@@ -61,9 +61,9 @@ module.exports = (io) => {
 
                 let score = users[socket.id].score
                 for (const [key, value] of Object.entries(users[socket.id].answers)){
-                    if (key === 'ready') { continue }
+                    if (key === 'ready' || key === 'done') { continue }
                     io.to(socket.id).emit(key, value)
-                    if (value){ score++ }
+                    if (value && !(users[socket.id].answers.done) ){ score++ }
                     console.log(value, 'score', score)
                 }
 

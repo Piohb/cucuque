@@ -157,7 +157,11 @@ module.exports = {
         if (findArtist.distance <= 3){ asArtist = true }
         console.log('artist', findArtist, asArtist)
 
-        return { ready: true, asSong: asSong, asArtist: asArtist}
+        if ( asSong && asArtist && !(users[socket.id].answers.done) ){
+            users[socket.id].answers.done = true
+        }
+
+        return { ready: true, asSong: asSong, asArtist: asArtist, done: users[socket.id].answers.done}
     },
 
     Normalize: function (text){
