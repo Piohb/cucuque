@@ -60,12 +60,16 @@ module.exports = (io) => {
                 console.log('timestamp', currentRoom.currentTrack)
                 users[socket.id].answers = Room.answerRegex(answer, currentRoom.currentTrack, currentRoom.uid)
 
+                let score = users[socket.id].score
                 for (const [key, value] of Object.entries(users[socket.id].answers)){
                     if (key === 'ready') { continue }
                     io.to(socket.id).emit(key, value)
-                    users[socket.id].score = value ? users[socket.id].score++ : users[socket.id].score
+                    if (value){ score++ }
+                    console.log(value, 'score', score)
                 }
 
+                users[socket.id].score = score
+                console.log('result', users[socket.id])
                 io.in(currentRoom.uid).emit("scores", users[socket.id])
             }
         })
