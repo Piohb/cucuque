@@ -16,7 +16,6 @@ router.post("/register", validateRegisterForm(), async (req, res) => {
 
         let user = await AuthController.register(req.body)
         user['dataValues']['access_token'] = AuthController.generateToken(user)
-        console.log(user)
         return res.status(201).json(user)
 
     } catch (err) {

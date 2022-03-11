@@ -49,6 +49,14 @@ module.exports = {
         let index = room['users'].indexOf(socket.id)
         if (index > -1) { room['users'].splice(index, 1) }
 
+        users[socket.id].score = 0
+        users[socket.id].answers = {
+            ready: true,
+            asArtist: false,
+            asSong: false,
+            done: false
+        }
+
         socket.leave(room.uid)
         this.IsFull(room.uid)
         //console.log(rooms)
@@ -90,7 +98,7 @@ module.exports = {
         console.log('updateGame')
         let currentRoom = rooms.filter(room => room.uid === uid)[0]
         let cron = {
-            cronTime: '*/30 * * * * *',
+            cronTime: '*/32 * * * * *',
             onTick: () => {
                 if (index < tracks.length - 1) {
                     io.in(uid).emit("blindTrack", tracks[index])
@@ -125,8 +133,13 @@ module.exports = {
         room.currentTrack = null
         room.timestamp = null
         room.users.forEach( (user) => {
-            users[user].answers.ready = false
             users[user].score = 0
+            users[user].answers = {
+                ready: true,
+                asArtist: false,
+                asSong: false,
+                done: false
+            }
             players.push(users[user])
         })
 
@@ -156,10 +169,6 @@ module.exports = {
         let findArtist = natural.LevenshteinDistanceSearch(cleanArtist, cleanAnswer)
         if (findArtist.distance <= 3){ asArtist = true }
         console.log('artist', findArtist, asArtist)
-
-        if ( asSong && asArtist && !(users[socket.id].answers.done) ){
-            users[socket.id].answers.done = true
-        }
 
         return { ready: true, asSong: asSong, asArtist: asArtist, done: users[socket.id].answers.done}
     },

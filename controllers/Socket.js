@@ -36,7 +36,7 @@ module.exports = (io) => {
                 const currentRoom = rooms.filter(room => room.users.includes(socket.id))[0]
                 console.log('usersReady', currentRoom.users)
                 currentRoom.users.forEach( (id) => {
-                    console.log(users[id])
+                    //console.log(users[id])
                     if ( !(users[id].answers.ready) ){ ready = false }
                 })
 
@@ -54,9 +54,9 @@ module.exports = (io) => {
             console.log(answer)
             let timestamp = Math.round(new Date().getTime())
             const currentRoom = rooms.filter(room => room.users.includes(socket.id))[0]
-            console.log(currentRoom)
+            //console.log(currentRoom)
             if ( (timestamp - currentRoom.timestamp) <= 30000 ){
-                console.log('timestamp', currentRoom.currentTrack)
+                console.log('timestampChecked')
                 users[socket.id].answers = Room.answerRegex(answer, currentRoom.currentTrack, socket)
 
                 let score = users[socket.id].score
@@ -68,6 +68,11 @@ module.exports = (io) => {
                 }
 
                 users[socket.id].score = score
+
+                if ( users[socket.id].answers.asSong && users[socket.id].answers.asArtist && !(users[socket.id].answers.done) ){
+                    users[socket.id].answers.done = true
+                }
+
                 console.log('result', users[socket.id])
                 io.in(currentRoom.uid).emit("scores", users[socket.id])
             }
