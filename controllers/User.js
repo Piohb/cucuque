@@ -68,6 +68,7 @@ module.exports = {
     //  answers : { ready, asArtist, asSong }
     socket:{
         findOrCreate: function(id, user){
+            console.log('user', user)
             if ( !(id in users) ) {
                 users[id] = {
                     'id': id,
