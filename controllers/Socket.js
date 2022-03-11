@@ -57,7 +57,7 @@ module.exports = (io) => {
             console.log(currentRoom)
             if ( (timestamp - currentRoom.timestamp) <= 30000 ){
                 console.log('timestamp', currentRoom.currentTrack)
-                users[socket.id].answers = Room.answerRegex(answer, currentRoom.currentTrack, currentRoom.uid)
+                users[socket.id].answers = Room.answerRegex(answer, currentRoom.currentTrack, socket)
 
                 let score = users[socket.id].score
                 for (const [key, value] of Object.entries(users[socket.id].answers)){
