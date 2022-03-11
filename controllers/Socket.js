@@ -34,13 +34,14 @@ module.exports = (io) => {
             if (bool){
                 let ready = true
                 const currentRoom = rooms.filter(room => room.users.includes(socket.id))[0]
-                console.log('boolReady', currentRoom.users)
+                console.log('usersReady', currentRoom.users)
                 currentRoom.users.forEach( (id) => {
                     console.log(users[id])
-                    ready = users[id].answers.ready
+                    if ( !(users[id].answers.ready) ){ ready = false }
                 })
 
                 if (ready){
+                    console.log('boolReady', ready)
                     let randomTracks = await Room.startGame(currentRoom)
                     console.log('aaaa', randomTracks.length)
                     Room.updateGame(io, currentRoom.uid, 0, randomTracks)
