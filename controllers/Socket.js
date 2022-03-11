@@ -24,7 +24,7 @@ module.exports = (io) => {
             })
             io.to(socket.id).emit("myLittleSocket", socket.id)
             io.in(currentRoom.uid).emit("someoneJoined", players)
-            console.log(rooms)
+            console.log('join', rooms)
         })
 
         socket.on("ready", async (bool) => {

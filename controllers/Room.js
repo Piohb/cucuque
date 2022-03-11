@@ -133,7 +133,7 @@ module.exports = {
         io.in(uid).emit("endGame", players)
     },
 
-    answerRegex: function (answer, currentTrack, uid){
+    answerRegex: function (answer, currentTrack, socket){
         console.log('regex', answer)
         //let banWords = ['mix','remix','mono version', 'stereo version', 'radio edit', 'remastered','feat', 'featuring']
         // bannir remix, remastered, featuring et () ou -
@@ -142,7 +142,7 @@ module.exports = {
         // naturalStringDistance si en dessous de 2 fautes
         // phonétique return true alors juste
 
-        let asSong = false, asArtist = false
+        let asSong = users[socket.id].answers.asSong, asArtist = users[socket.id].answers.asArtist
         let cleanAnswer = this.Normalize(answer)
         let cleanTrackName = this.Normalize(currentTrack.track.name)
         let cleanArtist = this.Normalize(currentTrack.track.artists[0].name)
