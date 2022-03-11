@@ -34,12 +34,10 @@ module.exports = (io) => {
             if (bool){
                 let ready = true
                 const currentRoom = rooms.filter(room => room.users.includes(socket.id))[0]
-                console.log(currentRoom.users)
+                console.log('boolReady', currentRoom.users)
                 currentRoom.users.forEach( (id) => {
                     console.log(users[id])
-                    if ( !(users[id].answers.ready) ){
-                        ready = false
-                    }
+                    ready = users[id].answers.ready
                 })
 
                 if (ready){
