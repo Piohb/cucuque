@@ -26,7 +26,7 @@ router.post("/", certificateAccess(), async (req, res) => {
 })
 
 // update user
-router.put("/:id", certificateAccess(), async (req, res) => {
+router.put("/:email", certificateAccess(), async (req, res) => {
     try {
         let user = await UserController.findUserByEmail(req.params.email, true)
         user = await UserController.update(user, req.body)
