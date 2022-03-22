@@ -63,7 +63,7 @@ module.exports = {
         return(req, res, next) => {
             let token = req.headers.authorization.split(' ');
             console.log('certificateAccess', req.headers.authorization, token)
-            jwt.verify(token, process.env.PRIVATE_KEY, function(err, decoded) {
+            jwt.verify(token[1], process.env.PRIVATE_KEY, function(err, decoded) {
                 console.log(decoded)
                 if (err) {
                     return res.status(401).msg(err)
