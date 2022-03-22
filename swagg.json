@@ -13,8 +13,34 @@
     "paths": {
       "/auth/register": {
         "post": {
-          "description": "Login to the application",
-          "tags": ["Authentification"]
+          "description": "Create an account",
+          "tags": ["Authentification"],
+          "parameters": [
+            {
+              "name": "username",
+              "in": "body",
+              "schema": {
+                "type": "string"
+              },
+              "required": true
+            },
+            {
+              "name": "email",
+              "in": "body",
+              "schema": {
+                "type": "string"
+              },
+              "required": true
+            },
+            {
+              "name": "password",
+              "in": "body",
+              "schema": {
+                "type": "string"
+              },
+              "required": true
+            }
+          ]
         }
       },
       "/auth/login": {
