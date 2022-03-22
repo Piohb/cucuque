@@ -5,7 +5,9 @@ module.exports = {
     //=== GET ALL USERS
     getUsers: async function(){
       try {
-          return await User.findAll()
+          return await User.findAll({
+              attributes: ['id', 'email', 'username', 'profile_pic']
+          })
       } catch (e) {
           throw new Error(e)
       }
@@ -21,9 +23,13 @@ module.exports = {
     },
 
     //=== GET USER BY EMAIL
-    findUserByEmail: async function (email) {
+    findUserByEmail: async function (email, bool = false ) {
         try {
-            return await User.findOne({ where : { email:email } })
+            if (bool){
+                return await User.findOne({ where : { email:email }, attributes: ['id', 'email', 'username', 'profile_pic'] })
+            } else {
+                return await User.findOne({ where : { email:email } })
+            }
 
         } catch (err) {
             throw new Error(err);

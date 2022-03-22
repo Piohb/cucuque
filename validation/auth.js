@@ -1,4 +1,8 @@
 const Validator = require('validator')
+const AuthController = require('../controllers/Auth')
+const jwt = require('jsonwebtoken')
+require("dotenv/config")
+
 module.exports = {
 
     validateRegisterForm : function () {
@@ -52,6 +56,21 @@ module.exports = {
             }
 
             next();
+        }
+    },
+
+    certificateAccess: function (){
+        return(req, res, next) => {
+            console.log('certificateAccess', req.headers.authorization)
+
+            jwt.verify(req.headers.authorization, process.env.PRIVATE_KEY, function(err, decoded) {
+                console.log(decoded)
+                if (err) {
+                    return res.status(401).msg(err)
+                }
+            });
+
+            next()
         }
     }
 }

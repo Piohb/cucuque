@@ -5,6 +5,7 @@ const UserController = require('../controllers/User')
 const { validateRegisterForm, validateLoginForm } = require("../validation/auth")
 const { check, error } = require('../utils.js')
 const Crypto = require("crypto");
+require("dotenv/config")
 
 //===
 router.post("/register", validateRegisterForm(), async (req, res) => {
@@ -55,7 +56,7 @@ router.post("/login", validateLoginForm(), async (req,res) => {
             profile_pic: user.profile_pic,
             access_token: AuthController.generateToken(user),
             token_type: 'Bearer',
-            expires_in: '900',
+            expires_in: process.env.TOKEN_EXPIRATION,
             refresh_token: user.token,
         });
     } catch (err) {
