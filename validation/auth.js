@@ -67,10 +67,10 @@ module.exports = {
                 console.log(decoded)
                 if (err) {
                     return res.status(401).json(err)
+                } else {
+                    next()
                 }
             });
-
-            next()
         }
     }
 }
