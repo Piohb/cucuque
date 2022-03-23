@@ -6,47 +6,284 @@
       "version": "1.0.0"
     },
     "swagger": "2.0",
-    "tags": [{
-      "name": "Authentification",
-      "description": "très important de se protéger"
-      }],
+    "tags": [
+      {
+        "name": "Authentification",
+        "description": "très important de se protéger",
+        "security": {
+          "JwtAuth": []
+        }
+      },
+      {
+        "name": "Users",
+        "description": "ils écoutent la zizique"
+      }
+    ],
     "paths": {
       "/auth/register": {
         "post": {
           "description": "Create an account",
           "tags": ["Authentification"],
-          "parameters": [
-            {
-              "name": "username",
-              "in": "body",
-              "schema": {
-                "type": "string"
-              },
-              "required": true
-            },
-            {
-              "name": "email",
-              "in": "body",
-              "schema": {
-                "type": "string"
-              },
-              "required": true
-            },
-            {
-              "name": "password",
-              "in": "body",
-              "schema": {
-                "type": "string"
-              },
-              "required": true
+          "parameters": [{
+            "name": "user",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "required": true
+                },
+                "email": {
+                  "type": "string",
+                  "required": true
+                },
+                "password": {
+                  "type": "string",
+                  "required": true
+                }
+              }
             }
-          ]
+          }],
+          "responses": {
+            "200": {
+              "description": "OK - return registered user",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "access_token": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       },
       "/auth/login": {
         "post": {
           "description": "Login to the application",
-          "tags": ["Authentification"]
+          "tags": ["Authentification"],
+          "parameters": [{
+            "name": "connexion",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "required": true
+                },
+                "grant_type": {
+                  "type": "string",
+                  "required": true
+                },
+                "password": {
+                  "type": "string",
+                  "value": "password || refresh_token",
+                  "required": false
+                },
+                "refreshToken": {
+                  "type": "string",
+                  "required": false
+                }
+              }
+            }
+          }],
+          "responses": {
+            "200": {
+              "description": "OK - return connected user with tokens",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "refresh_token": {
+                    "type": "string"
+                  },
+                  "access_token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users": {
+        "get" : {
+          "description": "Get all users",
+          "tags": ["Users"],
+          "responses": {
+            "200": {
+              "description": "OK - return array of users",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "profile_pic": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "description": "Create user",
+          "tags": [
+            "Users"
+          ],
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "password": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "profile_pic": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK - user created"
+            }
+          }
+        }
+      },
+      "/users/:email": {
+        "get": {
+          "description": "Get one user by email",
+          "tags": [
+            "Users"
+          ],
+          "parameters": [
+            {
+              "name": "email",
+              "in": "path",
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK - return specific user",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "profile_pic": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "description": "Update one user",
+          "tags": ["Users"],
+          "parameters": [{
+            "name": "email",
+            "in": "path",
+            "type": "string"
+          },
+            {
+              "name": "updates",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "profile_pic": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }],
+          "responses": {
+            "200": {
+              "description": "OK - user updated",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "profile_pic": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
