@@ -8,7 +8,7 @@ Application utilisant node.js via express, sequelize, JWT ainsi que socket.io af
 Install cucuque with npm
 
 ```bash
-  git clone https://github.com/BeatlesBOB/cucuque
+  git clone https://github.com/Piohb/cucuque
   npm install
   cd cucuque
   npm start
